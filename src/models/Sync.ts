@@ -19,6 +19,5 @@ export class Sync<T extends HasId> {
     } else {
       return axios.post(this.rootUrl, data);
     }
-
   }
 }
