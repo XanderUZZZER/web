@@ -1,18 +1,10 @@
-import { User } from './models/User'
+import { User, UserProps } from './models/User'
+import { Collection } from './models/Collection';
+import { UserForm } from './views/UserForm'
 
-const user = new User({ id: 33, name: 'Temp name', age: 22 });
+const rootUrl = 'http://localhost:3000/users';
 
-user.on('change', () => {
-  console.log('change#1 event occurred');
-});
-user.on('change', () => {
-  console.log('change#2 event occurred');
-});
+const user = User.buildUser({ name: 'Name', age: 20 });
+const form = new UserForm(document.getElementById('root'), user);
 
-console.log(user.get('name'));
-user.set({ name: 'updated' });
-
-user.on('save', () => {
-  console.log('user saved');
-});
-user.save();
+form.render();

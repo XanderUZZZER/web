@@ -1,4 +1,4 @@
-import { AxiosPromise } from "axios";
+import { AxiosPromise, AxiosResponse } from "axios";
 
 type Callback = () => void;
 
@@ -18,6 +18,40 @@ interface Events {
   trigger(eventName: string): void
 }
 
-export class Model {
+interface HasId {
+  id?: number;
+}
 
+export class Model<T extends HasId> {
+  constructor(
+    private attributes: ModelAttributes<T>,
+    private events: Events,
+    private sync: Sync<T>
+  ) { }
+
+  on = this.events.on;
+  trigger = this.events.trigger;
+  get = this.attributes.get;
+
+  public set(update: T) {
+    this.attributes.set(update);
+    this.events.trigger('change');
+  }
+
+  public fetch(): void {
+    const id = this.attributes.get('id');
+
+    if (typeof id !== 'number') {
+      throw new Error("Cannot fatch without an id");
+    }
+
+    this.sync.fetch(id).then((response: AxiosResponse): void => { this.set(response.data) });
+  }
+
+  public save(): void {
+    this.sync.save(this.attributes.getAll())
+      .then((response: AxiosResponse): void => {
+        this.trigger('save')
+      }).catch(() => { this.trigger('error') });
+  }
 }
