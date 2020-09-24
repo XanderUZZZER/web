@@ -1,2 +1,2 @@
 # web
-simple web framework implemetation using typescript, parcel, json-server
+simple web framework implementation using typescript, parcel, json-server
